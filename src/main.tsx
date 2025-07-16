@@ -1,34 +1,41 @@
-import "@ant-design/v5-patch-for-react-19";
-import { StrictMode } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { createRoot } from "react-dom/client";
-import { QueryProvider } from "@/services/context";
-import App from "./App.tsx";
-import Landing from "./pages/Landing/Landing.tsx";
-import SignUp from "./pages/SignUp/SignUp.tsx";
-import "./assets/styles/global.css";
+import '@ant-design/v5-patch-for-react-19';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { QueryProvider } from '@/services/context';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import App from './App.tsx';
+import './assets/styles/global.css';
+import NotFound from './components/NotFound/NotFound.tsx';
+import TodosPage from './pages/Todos/TodosPage.tsx';
+import UsersPage from './pages/Users/UsersPage.tsx';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <App />,
     children: [
       {
         index: true,
-        element: <Landing />,
+        element: <TodosPage />,
       },
       {
-        path: "/signup",
-        element: <SignUp />,
+        path: '/users',
+        element: <UsersPage />,
+      },
+      {
+        path: '*',
+        element: <NotFound />,
       },
     ],
   },
 ]);
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryProvider>
       <RouterProvider router={router} />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryProvider>
   </StrictMode>
 );
