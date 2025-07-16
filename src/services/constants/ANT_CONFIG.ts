@@ -1,12 +1,12 @@
 // EDIT COLORS ALSO IN 'tailwind.config', 'general.css' and 'ANTD_THEME' files
-import { theme, type ThemeConfig } from "antd";
-import { MAIN_COLORS } from "./COLORS";
+import { theme, type ThemeConfig } from 'antd';
+import { MAIN_COLORS } from './COLORS';
 // #2F2F2F
-const MAIN_THEME_TOKEN: ThemeConfig["token"] = {
-  borderRadius: 8,
+const MAIN_THEME_TOKEN: ThemeConfig['token'] = {
+  // borderRadius: 8,
   borderRadiusLG: 8,
   borderRadiusOuter: 8,
-  // fontFamily: `var(--font-main)`,
+  fontFamily: `var(--font-main)`,
   fontSize: 14,
   fontSizeXL: 16,
   controlHeight: 34,
@@ -19,11 +19,24 @@ export const ANTD_THEME: ThemeConfig = {
   token: {
     colorPrimary: MAIN_COLORS.light.primary,
     colorBgBase: MAIN_COLORS.light.background,
-    colorTextBase: MAIN_COLORS.light.text + "b6",
+    colorTextBase: MAIN_COLORS.light.text + 'b6',
     colorBorder: MAIN_COLORS.light.border,
     ...MAIN_THEME_TOKEN,
   },
-  components: {},
+  components: {
+    Menu: {
+      iconSize: 16,
+      itemActiveBg: MAIN_COLORS.light.secondary,
+      itemHoverBg: MAIN_COLORS.light.background,
+    },
+    Select: {
+      selectorBg: MAIN_COLORS.light.card,
+      optionSelectedBg: MAIN_COLORS.light.secondary,
+      activeBorderColor: 'transparent',
+      hoverBorderColor: 'transparent',
+      activeOutlineColor: 'transparent',
+    },
+  },
 };
 
 export const ANTD_THEME_DARK: ThemeConfig = {
@@ -31,7 +44,7 @@ export const ANTD_THEME_DARK: ThemeConfig = {
   token: {
     colorPrimary: MAIN_COLORS.dark.primary,
     colorBgBase: MAIN_COLORS.dark.background,
-    colorTextBase: MAIN_COLORS.dark.text + "b6",
+    colorTextBase: MAIN_COLORS.dark.text + 'b6',
     colorBorder: MAIN_COLORS.dark.border,
 
     ...MAIN_THEME_TOKEN,
