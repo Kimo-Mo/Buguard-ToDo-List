@@ -1,15 +1,17 @@
 export interface ITodo {
   id: string;
   title: string;
-  description?: string;
-  status: "todo" | "in-progress" | "done";
-  priority: "low" | "medium" | "high";
-  assignee?: {
-    name: string;
-    avatar: string;
-  };
+  description: string,
+  status: 'todo' | 'in-progress' | 'done';
+  priority: 'Low' | 'Medium' | 'High';
+  assignee?: string;
   dueDate?: string;
   tags: string[];
-  subtasks?: number;
-  completedSubtasks?: number;
+  subTasks?: ISubTask[];
+  completed: boolean;
+}
+export interface ISubTask {
+  id: string;
+  title: string;
+  completed: boolean;
 }
