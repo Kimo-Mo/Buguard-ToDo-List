@@ -8,6 +8,7 @@
   --color-background: var(--c-background);
   --color-background-dark: var(--c-background-dark);
   --color-text: var(--c-text);
+  --color-description: var(--c-description);
   --color-card: var(--c-card);
   --color-border: var(--c-border);
   --color-input: var(--c-input);
@@ -22,21 +23,31 @@ html {
   @apply bg-background text-text/80;
 }
 .ant-menu-item-selected {
-  border-inline-start:4px solid var(--c-primary) !important;
+  border-inline-start: 4px solid var(--c-primary) !important;
   border-start-start-radius: 0 !important;
   border-end-start-radius: 0 !important;
   font-weight: bold !important;
 }
 .ant-input-wrapper.ant-input-group {
   background-color: var(--c-input) !important;
-  border-radius: 17px !important;
+  border-radius: 25px !important;
+  padding: 8px 16px !important;
 }
 .ant-input-search .ant-btn:hover {
   background-color: transparent !important;
 }
-.ant-select-selector{
+.ant-select-selector {
   padding: 0 !important;
 }
-.ant-select-dropdown{
+.ant-select-dropdown {
   background-color: var(--c-card) !important;
+}
+.ant-segmented-item {
+  border: 2px solid transparent !important;
+}
+.ant-segmented-item-selected {
+  border: 2px solid var(--c-primary) !important;
+}
+.ant-card-head{
+  border-bottom: 0 !important;
 }
