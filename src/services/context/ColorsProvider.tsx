@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { MAIN_COLORS } from "../constants/COLORS";
+import { MAIN_COLORS } from "@/services/constants";
 import { useTheme } from "./ThemeProvider";
 
 export const ColorsProvider = ({ children }: { children: React.ReactNode }) => {

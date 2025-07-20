@@ -1,26 +1,33 @@
+import { Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import SegmentedTabs from '../ui/SegmentedTabs';
+import { useState } from 'react';
+import TasksList from './TodosList/TodosList';
+import TasksCards from './TodosCards/TodosCards';
+import LoadingComponent from '../ui/LoadingComponent';
 import { useGetTodosQuery } from '@/services/api';
-import type { ITodo } from '@/services/types/Todo';
-import { Card } from 'antd';
 
 const AllTodos = () => {
+  const [currentTab, setCurrentTab] = useState('Lists'); // 'Lists' or 'Cards'
   const { data: todos, error, isLoading } = useGetTodosQuery();
   return (
-    <>
-      {error && <div>Error: {error.message}</div>}
-      {isLoading && <div>Loading...</div>}
-      {!isLoading && !error && (
-        <div className=" p-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {todos.map((todo: ITodo) => (
-            <Card
-              key={todo.id}
-              style={{ maxWidth: 300, backgroundColor: 'var(--c-card)' }}>
-              <h2 className="text-lg mb-2">{todo.title}</h2>
-              <p>{todo.description}</p>
-            </Card>
-          ))}
-        </div>
-      )}
-    </>
+    <div className="mx-2">
+      <div className="flex justify-between items-center">
+        <SegmentedTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
+        <Button color="primary" variant="outlined">
+          <PlusOutlined /> New Task
+        </Button>
+      </div>
+      <div className="mt-4 mb-6">
+        {isLoading && !todos && <LoadingComponent />}
+        {error && (
+          <p className="text-danger">Error loading todos: {error.message}</p>
+        )}
+        {!isLoading &&
+          !error &&
+          (currentTab === 'Lists' ? <TasksList /> : <TasksCards />)}
+      </div>
+    </div>
   );
 };
 

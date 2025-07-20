@@ -1,6 +1,6 @@
 import { ConfigProvider } from "antd";
 import { useTheme } from "./ThemeProvider";
-import { ANTD_THEME, ANTD_THEME_DARK } from "../constants/ANT_CONFIG";
+import { ANTD_THEME, ANTD_THEME_DARK } from "@/services/constants";
 
 export const AntDProvider = ({ children }: { children: React.ReactNode }) => {
   const { IsDark } = useTheme();
