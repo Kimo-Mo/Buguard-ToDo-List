@@ -21,6 +21,7 @@ export const ANTD_THEME: ThemeConfig = {
     colorBgBase: MAIN_COLORS.light.background,
     colorTextBase: MAIN_COLORS.light.text + 'b6',
     colorBorder: MAIN_COLORS.light.border,
+    colorBgContainer: MAIN_COLORS.light.card,
     ...MAIN_THEME_TOKEN,
   },
   components: {
@@ -30,11 +31,25 @@ export const ANTD_THEME: ThemeConfig = {
       itemHoverBg: MAIN_COLORS.light.background,
     },
     Select: {
-      selectorBg: MAIN_COLORS.light.card,
       optionSelectedBg: MAIN_COLORS.light.secondary,
       activeBorderColor: 'transparent',
       hoverBorderColor: 'transparent',
       activeOutlineColor: 'transparent',
+    },
+    Segmented: {
+      trackBg: MAIN_COLORS.light.card,
+      itemSelectedColor: MAIN_COLORS.light.primary,
+      itemSelectedBg: MAIN_COLORS.light.secondary,
+      itemActiveBg: MAIN_COLORS.light.secondary,
+    },
+    Collapse: {
+      borderlessContentBg: MAIN_COLORS.light.card,
+      headerBg: MAIN_COLORS.light.input,
+      borderlessContentPadding: 0,
+    },
+    Card: {
+      bodyPadding: 16,
+      headerPadding:16,
     },
   },
 };
@@ -49,5 +64,6 @@ export const ANTD_THEME_DARK: ThemeConfig = {
 
     ...MAIN_THEME_TOKEN,
   },
-  components: {},
+  components: {
+  },
 };
