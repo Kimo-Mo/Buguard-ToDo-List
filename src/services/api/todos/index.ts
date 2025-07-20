@@ -1,2 +1,2 @@
-export * from "./GetTodosQuery";
-export * from "./todos.api";
+export * from './TodosQuery';
+export * from './todos.api';
