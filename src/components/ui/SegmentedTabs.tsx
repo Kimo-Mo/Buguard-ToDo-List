@@ -3,7 +3,7 @@ import { AppstoreOutlined, BarsOutlined } from '@ant-design/icons';
 import { Segmented } from 'antd';
 type SegmentedTabsProps = {
   currentTab: string;
-  setCurrentTab: (tab: string) => void;
+  setCurrentTab: (tab: 'Lists' | 'Cards') => void;
 };
 const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
   currentTab,
@@ -11,7 +11,7 @@ const SegmentedTabs: React.FC<SegmentedTabsProps> = ({
 }) => (
   <Segmented
     value={currentTab}
-    onChange={(value) => setCurrentTab(value as string)}
+    onChange={(value) => setCurrentTab(value as 'Lists' | 'Cards')}
     options={[
       { value: 'Lists', icon: <BarsOutlined className="*:w-4" /> },
       { value: 'Cards', icon: <AppstoreOutlined className="*:w-4" /> },

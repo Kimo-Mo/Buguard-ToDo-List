@@ -1,7 +1,7 @@
 export interface ITodo {
   id: string;
   title: string;
-  description: string,
+  description: string;
   status: 'todo' | 'in-progress' | 'done';
   priority: 'Low' | 'Medium' | 'High';
   assignee?: string;
@@ -9,6 +9,7 @@ export interface ITodo {
   tags: string[];
   subTasks?: ISubTask[];
   completed: boolean;
+  order: number;
 }
 export interface ISubTask {
   id: string;

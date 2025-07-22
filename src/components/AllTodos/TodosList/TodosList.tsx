@@ -1,21 +1,30 @@
 import TodosCategory from './TodosCategory';
-import { useMemo } from 'react';
-import { useGetTodosQuery } from '@/services/api';
+import { useMemo, type Dispatch, type SetStateAction } from 'react';
 import type { ITodo } from '@/services/types';
+import { SortableContext } from '@dnd-kit/sortable';
+import DndProvider from '@/components/AllTodos/shared/DndProvider';
 
-const TasksList = () => {
-  const { data: todos } = useGetTodosQuery();
+type TodosCardsProps = {
+  todosData: ITodo[];
+  setTodosData: Dispatch<SetStateAction<ITodo[]>>;
+  currentTab: 'Lists' | 'Cards';
+};
+const TodosList = ({
+  todosData,
+  setTodosData,
+  currentTab,
+}: TodosCardsProps) => {
   const todoItems = useMemo(
-    () => todos?.filter((todo: ITodo) => todo.status === 'todo'),
-    [todos]
+    () => todosData.filter((todo: ITodo) => todo.status === 'todo'),
+    [todosData]
   );
   const inProgressItems = useMemo(
-    () => todos?.filter((todo: ITodo) => todo.status === 'in-progress'),
-    [todos]
+    () => todosData.filter((todo: ITodo) => todo.status === 'in-progress'),
+    [todosData]
   );
   const doneItems = useMemo(
-    () => todos?.filter((todo: ITodo) => todo.status === 'done'),
-    [todos]
+    () => todosData.filter((todo: ITodo) => todo.status === 'done'),
+    [todosData]
   );
 
   return (
@@ -26,11 +35,29 @@ const TasksList = () => {
         <p>Due Date</p>
         <p>Priority</p>
       </div>
-      <TodosCategory label={'To-Do'} todos={todoItems} />
-      <TodosCategory label={'In-Progress'} todos={inProgressItems} />
-      <TodosCategory label={'Done'} todos={doneItems} />
+
+      <DndProvider
+        todosData={todosData}
+        setTodosData={setTodosData}
+        currentTab={currentTab}>
+        <SortableContext id="todo" items={todoItems.map((todo) => todo.id)}>
+          <TodosCategory label={'To-Do'} todos={todoItems} catId="todo" />
+        </SortableContext>
+        <SortableContext
+          id="in-progress"
+          items={inProgressItems.map((todo) => todo.id)}>
+          <TodosCategory
+            label={'In-Progress'}
+            todos={inProgressItems}
+            catId="in-progress"
+          />
+        </SortableContext>
+        <SortableContext id="done" items={doneItems.map((todo) => todo.id)}>
+          <TodosCategory label={'Done'} todos={doneItems} catId="done" />
+        </SortableContext>
+      </DndProvider>
     </div>
   );
 };
 
-export default TasksList;
+export default TodosList;

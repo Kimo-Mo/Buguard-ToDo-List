@@ -36,6 +36,7 @@ const siderStyle: React.CSSProperties = {
   bottom: 0,
   scrollbarWidth: 'thin',
   scrollbarGutter: 'stable',
+  backgroundColor: 'var(--c-card)',
 };
 
 const items: MenuItem[] = [
@@ -93,6 +94,7 @@ const SideBar = () => {
         style={{
           border: '0',
           padding: collapsed ? '0 4px' : '0 8px',
+          backgroundColor: 'var(--c-card)',
         }}
         defaultSelectedKeys={['/']}
         mode="vertical"

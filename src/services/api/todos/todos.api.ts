@@ -1,18 +1,17 @@
-import type { ITodo } from "@/services/types/Todo";
-import { ApiClient } from "../ClientApi";
+import type { ITodo } from '@/services/types/Todo';
+import { ApiClient } from '../ClientApi';
 
 export const getTodos = async () => {
-  const res = await ApiClient.get("/todos");
+  const res = await ApiClient.get('/todos');
   return res.data;
 };
-
 
 export const createTodo = async (todo: ITodo) => {
-  const res = await ApiClient.post("/todos", todo);
+  const res = await ApiClient.post('/todos', todo);
   return res.data;
 };
 
-export const updateTodo = async (todo: Partial<ITodo>, id: string) => {
+export const updateTodo = async (id: string, todo: Partial<ITodo>) => {
   const res = await ApiClient.put(`/todos/${id}`, todo);
   return res.data;
 };
