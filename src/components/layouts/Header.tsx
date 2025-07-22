@@ -1,15 +1,11 @@
-import { Avatar, Input, /*Segmented,*/ Select, type GetProps } from 'antd';
+import { Avatar, Input, Select, type GetProps } from 'antd';
 import {
   BellOutlined,
-  // MoonOutlined,
-  // SunOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-// import { useTheme } from '@/services/context';
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 const Header = () => {
-  // const { setTheme } = useTheme();
   const onSearch: SearchProps['onSearch'] = (value, _e, info) =>
     console.log(info?.source, value);
   return (
@@ -23,15 +19,6 @@ const Header = () => {
       />
       <div className="flex gap-4 flex-col md:flex-row justify-center items-center">
         <div className="flex gap-4">
-          {/* <Segmented
-            style={{ backgroundColor: 'var(--c-background)',border : '1px solid var(--c-border)' }}
-            shape="round"
-            options={[
-              { value: 'light', icon: <SunOutlined /> },
-              { value: 'dark', icon: <MoonOutlined /> },
-            ]}
-            onChange={(value) => setTheme(value as 'light' | 'dark')}
-          /> */}
           <BellOutlined className="*:w-6 *:h-6" />
           <Avatar icon={<UserOutlined />} />
         </div>
