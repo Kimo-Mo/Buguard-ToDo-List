@@ -1,14 +1,19 @@
 import type { ITodo } from '@/services/types';
 import { DotsThreeIcon, PlusIcon } from '@phosphor-icons/react';
 import TodoCard from './TodoCard';
+import { useDroppable } from '@dnd-kit/core';
 
 type TodosColProps = {
   label: string;
   todos: ITodo[] | undefined;
+  columnId: string;
 };
-const TodosCol = ({ label, todos }: TodosColProps) => {
+const TodosCol = ({ label, todos, columnId }: TodosColProps) => {
+    const { setNodeRef } = useDroppable({
+      id: columnId,
+    });
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" ref={setNodeRef}>
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">
           {label}{' '}
