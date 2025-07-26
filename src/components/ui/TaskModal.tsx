@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
-import { Modal, Form, Input, Select, DatePicker, message } from 'antd';
-import type { ITodo } from '@/services/types';
+import React, { useEffect, useState } from 'react';
+import { Modal, Form, Input, Select, DatePicker, message, Button } from 'antd';
+import type { ISubTask, ITodo } from '@/services/types';
 import { useCreateTodoQuery, useUpdateTodoQuery } from '@/services/api';
+import MDEditor, { commands } from '@uiw/react-md-editor';
+import { useTheme } from '@/services/context';
 
 export interface TaskModalProps {
   open: boolean;
@@ -28,19 +30,34 @@ const TaskModal: React.FC<TaskModalProps> = ({
   initialValues,
   mode = 'add',
 }) => {
+  const [subTasks, setSubTasks] = useState<ISubTask[]>(
+    initialValues?.subTasks || []
+  );
+  const [description, setDescription] = useState<string | undefined>(
+    initialValues?.description || ''
+  );
+
+  const { theme } = useTheme();
   const [form] = Form.useForm();
+
   useEffect(() => {
     if (!open) return;
+    document.body.style.overflow = 'hidden';
+    if (initialValues?.subTasks) {
+      setSubTasks(initialValues.subTasks);
+    }
 
     form.resetFields();
     if (mode === 'edit' && initialValues) {
       form.setFieldsValue({
         ...initialValues,
       });
+      setDescription(initialValues.description);
     } else {
       form.setFieldsValue({
         status: initialValues?.status || 'todo',
         priority: initialValues?.priority || 'Medium',
+        description: initialValues?.description || '',
       });
     }
   }, [open, initialValues, form, mode]);
@@ -51,9 +68,16 @@ const TaskModal: React.FC<TaskModalProps> = ({
     try {
       const values = await form.validateFields();
 
+      if (subTasks.map((s) => s.title).some((title) => !title.trim())) {
+        message.error('All subtasks must have a title');
+        throw new Error('Subtask titles cannot be empty');
+      }
+
       const formattedValues = {
         ...values,
         dueDate: values.dueDate?.format('YYYY-MM-DD'),
+        description: description,
+        subTasks: subTasks,
       };
 
       if (mode === 'add') {
@@ -68,16 +92,23 @@ const TaskModal: React.FC<TaskModalProps> = ({
       }
 
       form.resetFields();
-      onClose();
+      handleCancel();
     } catch (error) {
       console.error('Validation or mutation error:', error);
-      message.error('Something went wrong, please try again');
+    } finally {
+      restoreScrollbar();
     }
   };
 
   const handleCancel = () => {
     form.resetFields();
+    setDescription('');
+    restoreScrollbar();
+    setSubTasks([]);
     onClose();
+  };
+  const restoreScrollbar = () => {
+    document.body.style.overflow = 'auto';
   };
 
   return (
@@ -94,11 +125,56 @@ const TaskModal: React.FC<TaskModalProps> = ({
           <Input placeholder="Task title" />
         </Form.Item>
         <Form.Item
-          name="status"
-          label="Status"
-          rules={[{ required: true, message: 'Please select a status' }]}>
-          <Select options={statusOptions} />
+          name="description"
+          label="Description"
+          rules={[
+            {
+              required: true,
+              min: 5,
+              message: 'Please enter a description (min 5 characters)',
+            },
+          ]}>
+          <div data-color-mode={theme}>
+            <MDEditor
+              height={160}
+              value={description}
+              commands={[...commands.getCommands()]}
+              onChange={setDescription}
+              textareaProps={{
+                placeholder: 'Enter task description',
+                minLength: 5,
+              }}
+            />
+          </div>
         </Form.Item>
+        <div className="flex justify-between items-center gap-x-4 flex-col md:flex-row *:flex-1 *:w-full">
+          <Form.Item
+            name="status"
+            label="Status"
+            rules={[{ required: true, message: 'Please select a status' }]}>
+            <Select options={statusOptions} />
+          </Form.Item>
+          <Form.Item
+            name="priority"
+            label="Priority"
+            rules={[{ required: true, message: 'Please select a priority' }]}>
+            <Select options={priorityOptions} />
+          </Form.Item>
+        </div>
+        <div className="flex justify-between items-center gap-x-4 flex-col md:flex-row *:flex-1 *:w-full">
+          <Form.Item
+            name="dueDate"
+            label="Due Date"
+            rules={[{ required: true, message: 'Please select a due date' }]}>
+            <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item
+            name="assignee"
+            label="Assignee"
+            rules={[{ required: true, message: 'Please enter an assignee' }]}>
+            <Input placeholder="Assignee name" />
+          </Form.Item>
+        </div>
         <Form.Item
           name="tags"
           label="Tags"
@@ -113,36 +189,39 @@ const TaskModal: React.FC<TaskModalProps> = ({
           ]}>
           <Select mode="tags" placeholder="Add tags" />
         </Form.Item>
-        <Form.Item
-          name="assignee"
-          label="Assignee"
-          rules={[{ required: true, message: 'Please enter an assignee' }]}>
-          <Input placeholder="Assignee name" />
-        </Form.Item>
-        <Form.Item
-          name="dueDate"
-          label="Due Date"
-          rules={[{ required: true, message: 'Please select a due date' }]}>
-          <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
-        </Form.Item>
-        <Form.Item
-          name="priority"
-          label="Priority"
-          rules={[{ required: true, message: 'Please select a priority' }]}>
-          <Select options={priorityOptions} />
-        </Form.Item>
-        <Form.Item
-          name="description"
-          label="Description"
-          rules={[
-            {
-              required: true,
-              min: 5,
-              message: 'Please enter a description (min 5 characters)',
-            },
-          ]}>
-          <Input.TextArea rows={3} placeholder="Task description" />
-        </Form.Item>
+        {subTasks.map((subtask, index) => (
+          <div key={subtask.id || index} className="flex items-center mb-2">
+            <Input
+              placeholder="Subtask title"
+              value={subtask.title}
+              onChange={(e) => {
+                const newSubtasks = [...subTasks];
+                newSubtasks[index].title = e.target.value;
+                setSubTasks(newSubtasks);
+              }}
+            />
+            <Button
+              type="link"
+              danger
+              onClick={() => {
+                const updated = subTasks.filter((_, i) => i !== index);
+                setSubTasks(updated);
+              }}>
+              Remove
+            </Button>
+          </div>
+        ))}
+        <Button
+          type="default"
+          onClick={() =>
+            setSubTasks((prev) => [
+              ...prev,
+              { id: `sub-${Date.now()}`, title: '', completed: false },
+            ])
+          }
+          block>
+          Add Subtask
+        </Button>
       </Form>
     </Modal>
   );
