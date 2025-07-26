@@ -4,15 +4,22 @@ import {
   CheckCircleIcon,
   FlagIcon,
 } from '@phosphor-icons/react';
-import { Avatar, Divider } from 'antd';
+import { Avatar, Divider, message } from 'antd';
 import { HolderOutlined, UserOutlined } from '@ant-design/icons';
 import type { ISubTask, ITodo } from '@/services/types';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { memo, useState } from 'react';
+import { useState } from 'react';
+import { useUpdateTodoQuery } from '@/services/api';
 
-const TodoRow = ({ todo }: { todo: ITodo }) => {
+const TodoRow = ({
+  todo,
+  openEditModal,
+}: {
+  todo: ITodo;
+  openEditModal: (todo: ITodo) => void;
+}) => {
   const {
     attributes,
     listeners,
@@ -42,6 +49,58 @@ const TodoRow = ({ todo }: { todo: ITodo }) => {
     setSubTasksVisible((prev) => !prev);
   };
 
+  const updateTodo = useUpdateTodoQuery();
+  const toggleCheckTodo = () => {
+    if (!todo.id) return;
+
+    updateTodo.mutate(
+      {
+        id: todo.id,
+        todo: {
+          ...todo,
+          completed: !todo.completed,
+        },
+      },
+      {
+        onSuccess: () => {
+          message.success('Todo updated successfully');
+        },
+        onError: (error) => {
+          console.error('Failed to toggle todo:', error);
+          message.error('Failed to update todo');
+        },
+      }
+    );
+  };
+  const toggleCheckSubTask = (subTaskId: string) => {
+    if (!todo.id || !todo.subTasks) return;
+
+    const updatedSubTasks = todo.subTasks.map((subTask) => {
+      if (subTask.id === subTaskId) {
+        return { ...subTask, completed: !subTask.completed };
+      }
+      return subTask;
+    });
+
+    const updatedTodo = {
+      ...todo,
+      subTasks: updatedSubTasks,
+    };
+
+    updateTodo.mutate(
+      { id: todo.id, todo: updatedTodo },
+      {
+        onSuccess: () => {
+          message.success('Subtask updated successfully');
+        },
+        onError: (error) => {
+          console.error('Error updating subtask:', error);
+          message.error('Failed to update subtask');
+        },
+      }
+    );
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -56,7 +115,7 @@ const TodoRow = ({ todo }: { todo: ITodo }) => {
           <HolderOutlined className="text-description text-lg size-4" />
         </div>
         <div className="flex flex-1 items-center gap-2">
-          {subTasksVisible ? (
+          {subTasksVisible && subTasks.length > 0 ? (
             <CaretDownIcon
               weight="fill"
               color="var(--c-description)"
@@ -75,25 +134,30 @@ const TodoRow = ({ todo }: { todo: ITodo }) => {
             weight={completed ? 'fill' : 'regular'}
             className="cursor-pointer size-4"
             color={completed ? 'var(--c-primary)' : 'var(--c-description)'}
+            onClick={toggleCheckTodo}
           />
 
-          <p className="flex-1">
-            {title}
+          <div
+            className="flex-1 cursor-pointer flex flex-wrap items-center gap-2"
+            onClick={() => openEditModal(todo)}>
+            <p className={completed ? 'line-through text-description' : ''}>
+              {title}
+            </p>
             {tags &&
               tags.map((tag, idx) => (
                 <span
                   key={idx}
-                  className="rounded-xl bg-danger/20 text-danger/75 px-2 ms-4 inline-block">
+                  className="rounded-xl bg-danger/20 text-danger/75 px-2 inline-block">
                   {tag}
                 </span>
               ))}
-          </p>
+          </div>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
           {/* <p>{assignee}</p> */}
           <Avatar size={20} icon={<UserOutlined />} />
           <Divider type="vertical" />
-          <p>{dueDate}</p>
+          <p>{dueDate?.toString()}</p>
           <Divider type="vertical" />
           {priority === 'High' ? (
             <FlagIcon size={20} weight="fill" fill="var(--c-danger)" />
@@ -113,9 +177,19 @@ const TodoRow = ({ todo }: { todo: ITodo }) => {
               <CheckCircleIcon
                 weight={subTask.completed ? 'fill' : 'regular'}
                 className="cursor-pointer size-4 md:ms-4 "
-                color={subTask.completed ? 'var(--c-primary)' : 'var(--c-description)'}
+                color={
+                  subTask.completed
+                    ? 'var(--c-primary)'
+                    : 'var(--c-description)'
+                }
+                onClick={() => toggleCheckSubTask(subTask.id)}
               />
-              <p className="flex-1">{subTask.title}</p>
+              <p
+                className={`flex-1 ${
+                  subTask.completed ? 'line-through text-description' : ''
+                }`}>
+                {subTask.title}
+              </p>
             </div>
           ))}
         </div>
@@ -124,4 +198,4 @@ const TodoRow = ({ todo }: { todo: ITodo }) => {
   );
 };
 
-export default memo(TodoRow);
+export default TodoRow;

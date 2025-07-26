@@ -8,11 +8,15 @@ type TodosCardsProps = {
   todosData: ITodo[];
   setTodosData: Dispatch<SetStateAction<ITodo[]>>;
   currentTab: 'Lists' | 'Cards';
+  openAddModal: (initial: Partial<ITodo>) => void;
+  openEditModal: (todo: ITodo) => void;
 };
 const TodosList = ({
   todosData,
   setTodosData,
   currentTab,
+  openAddModal,
+  openEditModal,
 }: TodosCardsProps) => {
   const todoItems = useMemo(
     () => todosData.filter((todo: ITodo) => todo.status === 'todo'),
@@ -41,7 +45,13 @@ const TodosList = ({
         setTodosData={setTodosData}
         currentTab={currentTab}>
         <SortableContext id="todo" items={todoItems.map((todo) => todo.id)}>
-          <TodosCategory label={'To-Do'} todos={todoItems} catId="todo" />
+          <TodosCategory
+            label={'To-Do'}
+            todos={todoItems}
+            catId="todo"
+            openAddModal={openAddModal}
+            openEditModal={openEditModal}
+          />
         </SortableContext>
         <SortableContext
           id="in-progress"
@@ -50,10 +60,18 @@ const TodosList = ({
             label={'In-Progress'}
             todos={inProgressItems}
             catId="in-progress"
+            openAddModal={openAddModal}
+            openEditModal={openEditModal}
           />
         </SortableContext>
         <SortableContext id="done" items={doneItems.map((todo) => todo.id)}>
-          <TodosCategory label={'Done'} todos={doneItems} catId="done" />
+          <TodosCategory
+            label={'Done'}
+            todos={doneItems}
+            catId="done"
+            openAddModal={openAddModal}
+            openEditModal={openEditModal}
+          />
         </SortableContext>
       </DndProvider>
     </div>

@@ -10,7 +10,13 @@ import { UserOutlined } from '@ant-design/icons';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const TodoCard = ({ todo }: { todo: ITodo }) => {
+const TodoCard = ({
+  todo,
+  openEditModal,
+}: {
+  todo: ITodo;
+  openEditModal: (todo: ITodo) => void;
+}) => {
   const {
     attributes,
     listeners,
@@ -53,7 +59,10 @@ const TodoCard = ({ todo }: { todo: ITodo }) => {
         <DotsThreeIcon
           className="cursor-pointer"
           size={20}
-          onClick={() => console.log('card icon clicked')}
+          onClick={(e) => {
+            e.stopPropagation();
+            openEditModal(todo);
+          }}
         />
       }
       variant="borderless">
@@ -82,7 +91,7 @@ const TodoCard = ({ todo }: { todo: ITodo }) => {
         </p>
         <p className="flex items-center gap-2">
           <CalendarDotIcon size={20} />
-          {dueDate ? dueDate : 'No Due Date'}
+          {dueDate ? dueDate?.toString() : 'No Due Date'}
         </p>
       </div>
     </Card>

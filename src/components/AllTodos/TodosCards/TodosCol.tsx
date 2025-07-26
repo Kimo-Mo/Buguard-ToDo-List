@@ -7,11 +7,19 @@ type TodosColProps = {
   label: string;
   todos: ITodo[] | undefined;
   columnId: string;
+  openAddModal: (initial: Partial<ITodo>) => void;
+  openEditModal: (todo: ITodo) => void;
 };
-const TodosCol = ({ label, todos, columnId }: TodosColProps) => {
-    const { setNodeRef } = useDroppable({
-      id: columnId,
-    });
+const TodosCol = ({
+  label,
+  todos,
+  columnId,
+  openAddModal,
+  openEditModal,
+}: TodosColProps) => {
+  const { setNodeRef } = useDroppable({
+    id: columnId,
+  });
   return (
     <div className="flex flex-col gap-4" ref={setNodeRef}>
       <div className="flex justify-between items-center">
@@ -22,12 +30,19 @@ const TodosCol = ({ label, todos, columnId }: TodosColProps) => {
           </span>{' '}
         </h2>
         <div className="flex gap-2 *:cursor-pointer">
-          <PlusIcon size={20} />
+          <PlusIcon
+            size={20}
+            onClick={() =>
+              openAddModal({
+                status: columnId as 'todo' | 'in-progress' | 'done',
+              })
+            }
+          />
           <DotsThreeIcon size={20} />
         </div>
       </div>
       {todos?.map((todo) => (
-        <TodoCard key={todo.id} todo={todo} />
+        <TodoCard key={todo.id} todo={todo} openEditModal={openEditModal} />
       ))}
     </div>
   );

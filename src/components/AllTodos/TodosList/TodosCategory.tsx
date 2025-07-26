@@ -8,9 +8,17 @@ type TodosCategoryProps = {
   label: string;
   todos: ITodo[] | undefined;
   catId: string;
+  openAddModal: (initial: Partial<ITodo>) => void;
+  openEditModal: (todo: ITodo) => void;
 };
 
-const TodosCategory = ({ label, todos, catId }: TodosCategoryProps) => {
+const TodosCategory = ({
+  label,
+  todos,
+  catId,
+  openAddModal,
+  openEditModal,
+}: TodosCategoryProps) => {
   const { setNodeRef } = useDroppable({
     id: catId,
   });
@@ -27,7 +35,14 @@ const TodosCategory = ({ label, todos, catId }: TodosCategoryProps) => {
       ),
       children: (
         <>
-          {todos && todos.map((todo) => <TodoRow key={todo.id} todo={todo} />)}
+          {todos &&
+            todos.map((todo) => (
+              <TodoRow
+                key={todo.id}
+                todo={todo}
+                openEditModal={openEditModal}
+              />
+            ))}
           <Button
             variant="text"
             style={{
@@ -35,7 +50,9 @@ const TodosCategory = ({ label, todos, catId }: TodosCategoryProps) => {
               color: 'var(--c-primary)',
               backgroundColor: 'var(--c-card)',
             }}
-            onClick={(e) => e.preventDefault()}
+            onClick={() =>
+              openAddModal({ status: catId as 'todo' | 'in-progress' | 'done' })
+            }
             className="text-primary py-3 px-6 cursor-pointer">
             <PlusOutlined /> Add Task
           </Button>
