@@ -32,8 +32,6 @@ export const ANTD_THEME: ThemeConfig = {
     },
     Select: {
       optionSelectedBg: MAIN_COLORS.light.secondary,
-      activeBorderColor: 'transparent',
-      hoverBorderColor: 'transparent',
       activeOutlineColor: 'transparent',
     },
     Segmented: {
@@ -49,7 +47,12 @@ export const ANTD_THEME: ThemeConfig = {
     },
     Card: {
       bodyPadding: 16,
-      headerPadding:16,
+      headerPadding: 16,
+    },
+    Modal: {
+      headerBg: MAIN_COLORS.light.card,
+      contentBg: MAIN_COLORS.light.card,
+      titleColor: MAIN_COLORS.light.primary,
     },
   },
 };

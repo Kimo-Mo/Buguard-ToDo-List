@@ -36,9 +36,6 @@ html {
 .ant-input-search .ant-btn:hover {
   background-color: transparent !important;
 }
-.ant-select-selector {
-  padding: 0 !important;
-}
 .ant-select-dropdown {
   background-color: var(--c-card) !important;
 }
@@ -48,6 +45,6 @@ html {
 .ant-segmented-item-selected {
   border: 2px solid var(--c-primary) !important;
 }
-.ant-card-head{
+.ant-card-head {
   border-bottom: 0 !important;
 }
