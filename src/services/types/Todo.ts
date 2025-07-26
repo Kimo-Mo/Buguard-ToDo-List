@@ -1,3 +1,5 @@
+import type { Dayjs } from "dayjs";
+
 export interface ITodo {
   id: string;
   title: string;
@@ -5,7 +7,7 @@ export interface ITodo {
   status: 'todo' | 'in-progress' | 'done';
   priority: 'Low' | 'Medium' | 'High';
   assignee?: string;
-  dueDate?: string;
+  dueDate?: string | Dayjs;
   tags: string[];
   subTasks?: ISubTask[];
   completed: boolean;

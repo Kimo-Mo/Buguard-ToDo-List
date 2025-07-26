@@ -7,22 +7,63 @@ import TasksCards from './TodosCards/TodosCards';
 import LoadingComponent from '../ui/LoadingComponent';
 import { useGetTodosQuery } from '@/services/api';
 import type { ITodo } from '@/services/types';
+import { TaskModal } from '../ui';
+import dayjs from 'dayjs';
 
 const AllTodos = () => {
   const [currentTab, setCurrentTab] = useState<'Lists' | 'Cards'>('Lists'); // 'Lists' or 'Cards'
   const { data: todos, error, isLoading } = useGetTodosQuery();
   const [todosData, setTodosData] = useState<ITodo[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [modalInitialValues, setModalInitialValues] =
+    useState<Partial<ITodo | null>>(null);
+
   useMemo(() => {
-      if (todos) {
-        setTodosData(todos);
-      }
+    if (todos) {
+      setTodosData(todos);
+    }
   }, [todos]);
-  
+
+  const openAddModal = (initial: Partial<ITodo>) => {
+    setModalMode('add');
+    setModalInitialValues(initial);
+    setModalOpen(true);
+  };
+  const openEditModal = (todo: ITodo) => {
+    setModalMode('edit');
+
+    const fixedDueDate =
+      todo.dueDate && typeof todo.dueDate === 'string'
+        ? dayjs(todo.dueDate)
+        : undefined;
+
+    setModalInitialValues({
+      ...todo,
+      dueDate: fixedDueDate,
+    });
+
+    setModalOpen(true);
+  };
+  const closeModal = () => {
+    setModalOpen(false);
+    setModalInitialValues(null);
+  };
+
   return (
     <div className="mx-2">
+      <TaskModal
+        open={modalOpen}
+        onClose={closeModal}
+        initialValues={modalInitialValues}
+        mode={modalMode}
+      />
       <div className="flex justify-between items-center">
         <SegmentedTabs currentTab={currentTab} setCurrentTab={setCurrentTab} />
-        <Button color="primary" variant="outlined">
+        <Button
+          color="primary"
+          variant="outlined"
+          onClick={() => openAddModal({ status: 'todo' })}>
           <PlusOutlined /> New Task
         </Button>
       </div>
@@ -38,12 +79,16 @@ const AllTodos = () => {
               todosData={todosData}
               setTodosData={setTodosData}
               currentTab={currentTab}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
             />
           ) : (
             <TasksCards
               todosData={todosData}
               setTodosData={setTodosData}
               currentTab={currentTab}
+              openAddModal={openAddModal}
+              openEditModal={openEditModal}
             />
           ))}
       </div>
