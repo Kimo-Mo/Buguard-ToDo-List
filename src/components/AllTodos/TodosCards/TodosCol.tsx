@@ -20,7 +20,7 @@ const TodosCol = ({
   const { setNodeRef } = useDroppable({
     id: columnId,
   });
-  return (
+  return todos && todos.length > 0 ? (
     <div className="flex flex-col gap-4" ref={setNodeRef}>
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-semibold">
@@ -45,7 +45,7 @@ const TodosCol = ({
         <TodoCard key={todo.id} todo={todo} openEditModal={openEditModal} />
       ))}
     </div>
-  );
+  ) : null;
 };
 
 export default TodosCol;
