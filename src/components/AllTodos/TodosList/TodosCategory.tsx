@@ -60,7 +60,7 @@ const TodosCategory = ({
       ),
     },
   ];
-  return (
+  return todos && todos.length > 0 ? (
     <div ref={setNodeRef}>
       <Collapse
         items={items}
@@ -69,7 +69,7 @@ const TodosCategory = ({
         className="shadow-sm"
       />
     </div>
-  );
+  ) : null;
 };
 
 export default TodosCategory;
