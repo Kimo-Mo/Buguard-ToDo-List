@@ -1,7 +1,7 @@
-import { Button } from 'antd';
+import { Button, Result } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import SegmentedTabs from '../ui/SegmentedTabs';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import TodosList from './TodosList/TodosList';
 import TasksCards from './TodosCards/TodosCards';
 import LoadingComponent from '../ui/LoadingComponent';
@@ -9,8 +9,13 @@ import { useGetTodosQuery } from '@/services/api';
 import type { ITodo } from '@/services/types';
 import { TaskModal } from '../ui';
 import dayjs from 'dayjs';
+import { useOutletContext } from 'react-router';
 
 const AllTodos = () => {
+  const { debouncedSearch } = useOutletContext<{
+    debouncedSearch: string;
+  }>();
+  const [searchFound, setSearchFound] = useState(true);
   const [currentTab, setCurrentTab] = useState<'Lists' | 'Cards'>('Lists'); // 'Lists' or 'Cards'
   const { data: todos, error, isLoading } = useGetTodosQuery();
   const [todosData, setTodosData] = useState<ITodo[]>([]);
@@ -19,12 +24,25 @@ const AllTodos = () => {
   const [modalInitialValues, setModalInitialValues] =
     useState<Partial<ITodo | null>>(null);
 
-  useMemo(() => {
-    if (todos) {
-      setTodosData(todos);
-    }
+  useEffect(() => {
+    if (todos) setTodosData(todos);
   }, [todos]);
-
+  useEffect(() => {
+    setSearchFound(true);
+    if (debouncedSearch.length > 0 && todos) {
+      const filteredTodos = todos.filter((todo) =>
+        todo.title.toLowerCase().includes(debouncedSearch.toLowerCase())
+      );
+      if (filteredTodos.length === 0) {
+        setTodosData([]);
+        setSearchFound(false);
+        return;
+      }
+      setTodosData(filteredTodos);
+    } else {
+      setTodosData(todos || []);
+    }
+  }, [debouncedSearch, todos]);
   const openAddModal = (initial: Partial<ITodo>) => {
     setModalMode('add');
     setModalInitialValues(initial);
@@ -91,6 +109,13 @@ const AllTodos = () => {
               openEditModal={openEditModal}
             />
           ))}
+        {!searchFound && (
+          <Result
+            status="error"
+            title="No Tasks Found"
+            subTitle="Please try again with different search criteria."
+          />
+        )}
       </div>
     </div>
   );
