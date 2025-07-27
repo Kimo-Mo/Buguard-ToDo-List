@@ -1,21 +1,21 @@
-import { Avatar, Input, Select, type GetProps } from 'antd';
-import {
-  BellOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-type SearchProps = GetProps<typeof Input.Search>;
+import { Avatar, Input, Select } from 'antd';
+import { BellOutlined, UserOutlined } from '@ant-design/icons';
 const { Search } = Input;
-const Header = () => {
-  const onSearch: SearchProps['onSearch'] = (value, _e, info) =>
-    console.log(info?.source, value);
+
+interface HeaderProps {
+  searchQuery: string;
+  setSearchQuery: (value: string) => void;
+}
+const Header = ({ searchQuery, setSearchQuery }: HeaderProps) => {
   return (
     <nav className="flex flex-col-reverse md:flex-row justify-between items-center gap-4 bg-card py-3 px-6 m-6 shadow-xs rounded-[37px] ">
       <Search
         placeholder="search project..."
         allowClear
         variant="borderless"
-        onSearch={onSearch}
         style={{ maxWidth: 200 }}
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
       />
       <div className="flex gap-4 flex-col md:flex-row justify-center items-center">
         <div className="flex gap-4">
