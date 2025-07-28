@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import SideBar from './SideBar';
 import Header from './Header';
 import { useDebounce } from 'use-debounce';
+import ErrorBoundary from 'antd/es/alert/ErrorBoundary';
 
 const { Content } = Layout;
 
@@ -21,7 +22,11 @@ const MainLayout: React.FC = () => {
         }}>
         <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         <Content style={{ margin: '0 16px' }}>
-          <Outlet context={{ debouncedSearch }} />
+          <ErrorBoundary
+            message="Something went wrong!"
+            description="Please try again later.">
+            <Outlet context={{ debouncedSearch }} />
+          </ErrorBoundary>
         </Content>
       </Layout>
     </Layout>
