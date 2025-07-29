@@ -1,7 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select, DatePicker, message, Button } from 'antd';
-import type { ISubTask, ITodo } from '@/services/types';
-import { useCreateTodoQuery, useUpdateTodoQuery } from '@/services/api';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  message,
+  Button,
+  type SelectProps,
+} from 'antd';
+import type { IAssignee, ISubTask, ITodo } from '@/services/types';
+import {
+  useCreateTodoQuery,
+  useGetAssigneesQuery,
+  useUpdateTodoQuery,
+} from '@/services/api';
 import MDEditor, { commands } from '@uiw/react-md-editor';
 import { useTheme } from '@/services/context';
 
@@ -51,6 +64,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
     if (mode === 'edit' && initialValues) {
       form.setFieldsValue({
         ...initialValues,
+        assignee: initialValues.assignee?.id,
       });
       setDescription(initialValues.description);
     } else {
@@ -61,6 +75,14 @@ const TaskModal: React.FC<TaskModalProps> = ({
       });
     }
   }, [open, initialValues, form, mode]);
+
+  const { data: assignees } = useGetAssigneesQuery();
+  const assigneeOptions: SelectProps['options'] = useMemo(() => {
+    return assignees?.map((assignee: IAssignee) => ({
+      value: assignee.id,
+      label: <span>{assignee.name}</span>,
+    }));
+  }, [assignees]);
 
   const addTodo = useCreateTodoQuery();
   const updataTodo = useUpdateTodoQuery();
@@ -75,9 +97,12 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
       const formattedValues = {
         ...values,
+        assigneeId: values.assignee,
         dueDate: values.dueDate?.format('YYYY-MM-DD'),
-        description: description,
-        subTasks: subTasks,
+        description,
+        subTasks,
+        completed: initialValues?.completed || false,
+        order: initialValues?.order || 0,
       };
 
       if (mode === 'add') {
@@ -134,15 +159,17 @@ const TaskModal: React.FC<TaskModalProps> = ({
               message: 'Please enter a description (min 5 characters)',
             },
           ]}>
-          <div data-color-mode={theme}>
+          <div data-color-mode={theme} id="description">
             <MDEditor
               height={160}
               value={description}
               commands={[...commands.getCommands()]}
               onChange={setDescription}
+              preview="edit"
               textareaProps={{
                 placeholder: 'Enter task description',
                 minLength: 5,
+                required: true,
               }}
             />
           </div>
@@ -171,8 +198,8 @@ const TaskModal: React.FC<TaskModalProps> = ({
           <Form.Item
             name="assignee"
             label="Assignee"
-            rules={[{ required: true, message: 'Please enter an assignee' }]}>
-            <Input placeholder="Assignee name" />
+            rules={[{ required: true, message: 'Please select an assignee' }]}>
+            <Select options={assigneeOptions} placeholder="Select assignee" />
           </Form.Item>
         </div>
         <Form.Item
