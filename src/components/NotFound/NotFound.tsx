@@ -9,7 +9,6 @@ const NotFound = () => {
       title="404"
       subTitle="Sorry, the page you visited does not exist."
       extra={
-        // how to set active selected link (home page)
         <Button type="primary" onClick={() => navigate('/')}>
           Back Home
         </Button>
