@@ -3,15 +3,22 @@ import {
   CaretRightIcon,
   CheckCircleIcon,
   FlagIcon,
+  TrashIcon,
 } from '@phosphor-icons/react';
-import { Avatar, Divider, message } from 'antd';
+import {
+  Avatar,
+  Divider,
+  message,
+  Popconfirm,
+  type PopconfirmProps,
+} from 'antd';
 import { HolderOutlined, UserOutlined } from '@ant-design/icons';
 import type { ISubTask, ITodo } from '@/services/types';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useState } from 'react';
-import { useUpdateTodoQuery } from '@/services/api';
+import { useDeleteTodoQuery, useUpdateTodoQuery } from '@/services/api';
 
 const TodoRow = ({
   todo,
@@ -101,6 +108,17 @@ const TodoRow = ({
     );
   };
 
+  const deleteTodo = useDeleteTodoQuery();
+  const confirmDelete: PopconfirmProps['onConfirm'] = () => {
+    deleteTodo.mutate(todo.id, {
+      onSuccess: () => message.success('Todo deleted successfully'),
+      onError: (error) => {
+        console.error('Failed to delete todo:', error);
+        message.error('Failed to delete todo');
+      },
+    });
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -166,6 +184,16 @@ const TodoRow = ({
           ) : (
             <FlagIcon size={20} fill="var(--c-text)" />
           )}
+          <Divider type="vertical" />
+          <Popconfirm
+            className="cursor-pointer"
+            title="Delete the task"
+            description="Are you sure to delete this task?"
+            onConfirm={confirmDelete}
+            okText="Yes"
+            cancelText="No">
+            <TrashIcon size={20} />
+          </Popconfirm>
         </div>
       </div>
       {!isDragging && subTasks.length > 0 && subTasksVisible && (
