@@ -5,7 +5,6 @@ import {
   DotsThreeIcon,
 } from '@phosphor-icons/react';
 import { Avatar, Card, Divider, message } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -39,7 +38,7 @@ const TodoCard = ({
   const {
     title,
     description,
-    // assignee,
+    assignee,
     dueDate,
     // priority,
     subTasks = [],
@@ -99,7 +98,11 @@ const TodoCard = ({
         </>
       }
       variant="borderless">
-      <p className="text-description">{description}</p>
+      <p className="text-description">
+        {description.length > 150
+          ? description.slice(0, 150) + '...'
+          : description}
+      </p>
       <div className="flex items-center justify-between mt-3">
         <div className="flex items-center gap-2">
           {tags.map((tag, idx) => (
@@ -110,7 +113,12 @@ const TodoCard = ({
             </span>
           ))}
         </div>
-        <Avatar size={20} icon={<UserOutlined />} />
+        {assignee && (
+          <Avatar
+            src={assignee.avatar}
+            className="!size-6 !bg-description/50"
+          />
+        )}
       </div>
       <Divider />
       <div className="flex items-center justify-between">

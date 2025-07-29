@@ -12,7 +12,7 @@ import {
   Popconfirm,
   type PopconfirmProps,
 } from 'antd';
-import { HolderOutlined, UserOutlined } from '@ant-design/icons';
+import { HolderOutlined } from '@ant-design/icons';
 import type { ISubTask, ITodo } from '@/services/types';
 
 import { useSortable } from '@dnd-kit/sortable';
@@ -43,7 +43,7 @@ const TodoRow = ({
 
   const {
     title,
-    // assignee,
+    assignee,
     dueDate,
     priority,
     subTasks = [],
@@ -55,7 +55,6 @@ const TodoRow = ({
     e.stopPropagation();
     setSubTasksVisible((prev) => !prev);
   };
-
   const updateTodo = useUpdateTodoQuery();
   const toggleCheckTodo = () => {
     if (!todo.id) return;
@@ -172,8 +171,9 @@ const TodoRow = ({
           </div>
         </div>
         <div className="flex items-center gap-2 md:gap-4">
-          {/* <p>{assignee}</p> */}
-          <Avatar size={20} icon={<UserOutlined />} />
+          {assignee && (
+            <Avatar src={assignee?.avatar} className="!size-6 !bg-description/50" />
+          )}
           <Divider type="vertical" />
           <p>{dueDate?.toString()}</p>
           <Divider type="vertical" />
