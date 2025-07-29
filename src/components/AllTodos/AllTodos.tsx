@@ -1,13 +1,16 @@
 import { Button, Result } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import SegmentedTabs from '../ui/SegmentedTabs';
 import { useEffect, useState } from 'react';
 import TodosList from './TodosList/TodosList';
 import TasksCards from './TodosCards/TodosCards';
-import LoadingComponent from '../ui/LoadingComponent';
 import { useGetTodosQuery } from '@/services/api';
 import type { ITodo } from '@/services/types';
-import { TaskModal } from '../ui';
+import {
+  ErrorNotFound,
+  LoadingComponent,
+  SegmentedTabs,
+  TaskModal,
+} from '../ui';
 import dayjs from 'dayjs';
 import { useOutletContext } from 'react-router';
 
@@ -87,9 +90,7 @@ const AllTodos = () => {
       </div>
       <div className="mt-4 mb-6">
         {isLoading && !todos && <LoadingComponent />}
-        {error && (
-          <p className="text-danger">Error loading todos: {error.message}</p>
-        )}
+        {error && <ErrorNotFound />}
         {!isLoading &&
           !error &&
           (currentTab === 'Lists' ? (

@@ -38,6 +38,7 @@ const TodosList = ({
         <p>Assignee</p>
         <p>Due Date</p>
         <p>Priority</p>
+        <p>Delete</p>
       </div>
 
       <DndProvider

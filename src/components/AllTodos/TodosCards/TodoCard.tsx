@@ -4,11 +4,13 @@ import {
   CheckSquareOffsetIcon,
   DotsThreeIcon,
 } from '@phosphor-icons/react';
-import { Avatar, Card, Divider } from 'antd';
+import { Avatar, Card, Divider, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useState } from 'react';
+import { useDeleteTodoQuery } from '@/services/api';
 
 const TodoCard = ({
   todo,
@@ -17,6 +19,7 @@ const TodoCard = ({
   todo: ITodo;
   openEditModal: (todo: ITodo) => void;
 }) => {
+  const [openActions, setOpenActions] = useState(false);
   const {
     attributes,
     listeners,
@@ -43,12 +46,26 @@ const TodoCard = ({
     // completed,
     tags,
   } = todo;
+
+  const deleteTodo = useDeleteTodoQuery();
+  const confirmDelete = () => {
+    setOpenActions(false);
+    deleteTodo.mutate(todo.id, {
+      onSuccess: () => message.success('Todo deleted successfully'),
+      onError: (error) => {
+        console.error('Failed to delete todo:', error);
+        message.error('Failed to delete todo');
+      },
+    });
+  };
+
   return (
     <Card
       ref={setNodeRef}
       style={style}
       {...listeners}
       {...attributes}
+      onClick={() => setOpenActions(false)}
       className={isDragging ? 'opacity-50' : ''}
       title={
         <h2 className="text-md font-semibold flex justify-between items-center gap-2">
@@ -56,14 +73,30 @@ const TodoCard = ({
         </h2>
       }
       extra={
-        <DotsThreeIcon
-          className="cursor-pointer"
-          size={20}
-          onClick={(e) => {
-            e.stopPropagation();
-            openEditModal(todo);
-          }}
-        />
+        <>
+          <DotsThreeIcon
+            className="cursor-pointer relative"
+            size={20}
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenActions((prev) => !prev);
+            }}
+          />
+          {openActions && (
+            <div className="absolute right-0 top-8 z-50 mt-2 bg-card shadow-lg rounded-md p-2">
+              <button
+                className="block w-full text-left px-4 py-2 transition-all duration-150 hover:bg-background rounded-md cursor-pointer"
+                onClick={() => openEditModal(todo)}>
+                Edit
+              </button>
+              <button
+                className="block w-full text-left px-4 py-2 transition-all duration-150 hover:bg-background rounded-md cursor-pointer"
+                onClick={confirmDelete}>
+                Delete
+              </button>
+            </div>
+          )}
+        </>
       }
       variant="borderless">
       <p className="text-description">{description}</p>
