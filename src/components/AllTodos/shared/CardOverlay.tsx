@@ -44,7 +44,7 @@ const CardOverlay = ({ activeTodo }: { activeTodo: ITodo }) => {
         </p>
         <p className="flex items-center gap-2">
           <CalendarDotIcon size={20} />
-          {activeTodo.dueDate ? activeTodo.dueDate : 'No Due Date'}
+          {activeTodo.dueDate ? (activeTodo.dueDate as string) : 'No Due Date'}
         </p>
       </div>
     </Card>

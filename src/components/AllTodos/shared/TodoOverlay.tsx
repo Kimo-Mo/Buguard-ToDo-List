@@ -37,7 +37,7 @@ const TodoOverlay = ({ activeTodo }: { activeTodo: ITodo }) => {
         {/* <p>{assignee}</p> */}
         <Avatar size={20} icon={<UserOutlined />} />
         <Divider type="vertical" />
-        <p>{activeTodo.dueDate}</p>
+        <p>{activeTodo.dueDate as string}</p>
         <Divider type="vertical" />
         {activeTodo.priority === 'High' ? (
           <FlagIcon size={20} weight="fill" fill="var(--c-danger)" />
