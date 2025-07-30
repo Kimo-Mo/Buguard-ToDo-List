@@ -9,6 +9,10 @@ import './assets/styles/global.css';
 import NotFound from './components/NotFound/NotFound.tsx';
 import TodosPage from './pages/Todos/TodosPage.tsx';
 import UsersPage from './pages/Users/UsersPage.tsx';
+import { Auth0Provider } from '@auth0/auth0-react';
+
+const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+const domain = import.meta.env.VITE_AUTH0_DOMAIN;
 
 const router = createBrowserRouter([
   {
@@ -33,9 +37,17 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <QueryProvider>
-      <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryProvider>
+    <Auth0Provider
+      clientId={clientId}
+      domain={domain}
+      cacheLocation="localstorage"
+      authorizationParams={{
+        redirect_uri: window.location.origin,
+      }}>
+      <QueryProvider>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryProvider>
+    </Auth0Provider>
   </StrictMode>
 );
