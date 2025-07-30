@@ -10,7 +10,7 @@ import {
   UsergroupDeleteOutlined,
 } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -50,6 +50,15 @@ const items: MenuItem[] = [
 ];
 
 const SideBar = () => {
+  const { pathname } = useLocation();
+  const [selectedPage, setSelectedPage] = useState('');
+  useEffect(() => {
+    if (pathname.includes('users')) {
+      setSelectedPage('/users');
+    } else {
+      setSelectedPage('/');
+    }
+  }, [pathname]);
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
 
@@ -96,7 +105,8 @@ const SideBar = () => {
           padding: collapsed ? '0 4px' : '0 8px',
           backgroundColor: 'var(--c-card)',
         }}
-        defaultSelectedKeys={['/']}
+        onSelect={({ key }) => setSelectedPage(key as string)}
+        selectedKeys={[selectedPage]}
         mode="vertical"
         items={items}
         onClick={(e) => handleMenuClick(e)}

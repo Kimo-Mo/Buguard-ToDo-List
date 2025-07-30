@@ -1,4 +1,5 @@
-import type { Dayjs } from "dayjs";
+import type { Dayjs } from 'dayjs';
+import type { IAssignee } from './Assignee';
 
 export interface ITodo {
   id: string;
@@ -6,7 +7,8 @@ export interface ITodo {
   description: string;
   status: 'todo' | 'in-progress' | 'done';
   priority: 'Low' | 'Medium' | 'High';
-  assignee?: string;
+  assigneeId: string;
+  assignee?: IAssignee;
   dueDate?: string | Dayjs;
   tags: string[];
   subTasks?: ISubTask[];

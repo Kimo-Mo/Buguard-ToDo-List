@@ -1,10 +1,10 @@
 import { Button, Result } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import TodosList from './TodosList/TodosList';
 import TasksCards from './TodosCards/TodosCards';
-import { useGetTodosQuery } from '@/services/api';
-import type { ITodo } from '@/services/types';
+import { useGetAssigneesQuery, useGetTodosQuery } from '@/services/api';
+import type { IAssignee, ITodo } from '@/services/types';
 import {
   ErrorNotFound,
   LoadingComponent,
@@ -21,6 +21,15 @@ const AllTodos = () => {
   const [searchFound, setSearchFound] = useState(true);
   const [currentTab, setCurrentTab] = useState<'Lists' | 'Cards'>('Lists'); // 'Lists' or 'Cards'
   const { data: todos, error, isLoading } = useGetTodosQuery();
+  const { data: assignees } = useGetAssigneesQuery();
+  const TodosWithUsers = useMemo(() => {
+    return todos?.map((todo) => ({
+      ...todo,
+      assignee: assignees.find(
+        (user: IAssignee) => user.id === todo.assigneeId
+      ),
+    }));
+  }, [todos, assignees]);
   const [todosData, setTodosData] = useState<ITodo[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
@@ -28,12 +37,12 @@ const AllTodos = () => {
     useState<Partial<ITodo | null>>(null);
 
   useEffect(() => {
-    if (todos) setTodosData(todos);
-  }, [todos]);
+    if (TodosWithUsers) setTodosData(TodosWithUsers);
+  }, [TodosWithUsers]);
   useEffect(() => {
     setSearchFound(true);
-    if (debouncedSearch.length > 0 && todos) {
-      const filteredTodos = todos.filter((todo) =>
+    if (debouncedSearch.length > 0 && TodosWithUsers) {
+      const filteredTodos = TodosWithUsers.filter((todo) =>
         todo.title.toLowerCase().includes(debouncedSearch.toLowerCase())
       );
       if (filteredTodos.length === 0) {
@@ -43,9 +52,9 @@ const AllTodos = () => {
       }
       setTodosData(filteredTodos);
     } else {
-      setTodosData(todos || []);
+      setTodosData(TodosWithUsers || []);
     }
-  }, [debouncedSearch, todos]);
+  }, [debouncedSearch, TodosWithUsers]);
   const openAddModal = (initial: Partial<ITodo>) => {
     setModalMode('add');
     setModalInitialValues(initial);
