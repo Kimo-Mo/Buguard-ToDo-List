@@ -6,9 +6,8 @@ import { QueryProvider } from '@/services/context';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import App from './App.tsx';
 import './assets/styles/global.css';
-import NotFound from './components/NotFound/NotFound.tsx';
-import TodosPage from './pages/Todos/TodosPage.tsx';
-import UsersPage from './pages/Users/UsersPage.tsx';
+import { ProtectedRoute, NotFound } from '@/components';
+import { AuthPage, TodosPage, UsersPage } from '@/pages';
 import { Auth0Provider } from '@auth0/auth0-react';
 
 const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
@@ -21,11 +20,23 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <TodosPage />,
+        element: (
+          <ProtectedRoute>
+            <TodosPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/users',
-        element: <UsersPage />,
+        element: (
+          <ProtectedRoute>
+            <UsersPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/auth',
+        element: <AuthPage />,
       },
       {
         path: '*',
