@@ -1,4 +1,4 @@
-import { Menu, Spin, type MenuProps } from 'antd';
+import { Menu, type MenuProps } from 'antd';
 import Sider from 'antd/es/layout/Sider';
 import {
   AppstoreOutlined,
@@ -8,11 +8,10 @@ import {
   PieChartOutlined,
   SettingOutlined,
   UsergroupDeleteOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { LoginButton, LogoutButton } from '../ui';
-import { useAuth0 } from '@auth0/auth0-react';
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -49,16 +48,17 @@ const items: MenuItem[] = [
   getItem('Users', '/users', <UsergroupDeleteOutlined />),
   getItem('Report', 'report', <FileUnknownOutlined />),
   getItem('Settings', 'settings', <SettingOutlined />),
+  getItem('Profile', '/auth', <UserOutlined />),
 ];
 
 const SideBar = () => {
-  const { user, isAuthenticated, isLoading, error } = useAuth0();
-
   const { pathname } = useLocation();
   const [selectedPage, setSelectedPage] = useState('');
   useEffect(() => {
     if (pathname.includes('users')) {
       setSelectedPage('/users');
+    } else if (pathname.includes('auth')) {
+      setSelectedPage('/auth');
     } else {
       setSelectedPage('/');
     }
@@ -74,7 +74,6 @@ const SideBar = () => {
     }
   };
 
-  // make the sider collapsed when the screen is less than 768px
   const handleResize = () => {
     if (window.innerWidth < 768) {
       setCollapsed(true);
@@ -82,10 +81,9 @@ const SideBar = () => {
       setCollapsed(false);
     }
   };
-  // add resize event listener only once when component mounts
+
   useEffect(() => {
     window.addEventListener('resize', handleResize);
-    // Initial check
     handleResize();
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -115,25 +113,6 @@ const SideBar = () => {
         items={items}
         onClick={(e) => handleMenuClick(e)}
       />
-      {error && <p className="text-danger text-center mt-4">{error.message}</p>}
-      {!error && isLoading && (
-        <div className="flex items-center justify-center my-4">
-          <Spin size="small" />
-        </div>
-      )}
-      {!error && !isLoading && isAuthenticated && (
-        <div className="flex flex-col md:flex-row items-center justify-center gap-2 px-1 md:px-3 mb-4 text-center">
-          <img
-            src={user?.picture}
-            alt={user?.name}
-            className="rounded-full size-6 inline-block"
-          />
-          <span>{user?.name}</span>
-        </div>
-      )}
-      <div className="mx-0 md:mx-4 px-1 md:px-3">
-        {isAuthenticated ? <LogoutButton /> : <LoginButton />}
-      </div>
     </Sider>
   );
 };
