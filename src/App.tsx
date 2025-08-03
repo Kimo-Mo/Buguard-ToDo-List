@@ -1,4 +1,4 @@
-import MainLayout from '@/components/layouts/MainLayout';
+import { MainLayout } from '@/components';
 import { UIProvider } from '@/services/context';
 import { App as AntdApp } from 'antd';
 
