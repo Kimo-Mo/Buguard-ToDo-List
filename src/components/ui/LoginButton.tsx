@@ -7,7 +7,6 @@ const LoginButton = () => {
   return (
     <Button
       variant="outlined"
-      className="!w-full"
       onClick={() => loginWithRedirect()}>
       Log In
     </Button>

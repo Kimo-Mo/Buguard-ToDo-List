@@ -8,7 +8,6 @@ import {
   PieChartOutlined,
   SettingOutlined,
   UsergroupDeleteOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -48,7 +47,6 @@ const items: MenuItem[] = [
   getItem('Users', '/users', <UsergroupDeleteOutlined />),
   getItem('Report', 'report', <FileUnknownOutlined />),
   getItem('Settings', 'settings', <SettingOutlined />),
-  getItem('Profile', '/auth', <UserOutlined />),
 ];
 
 const SideBar = () => {
@@ -57,8 +55,6 @@ const SideBar = () => {
   useEffect(() => {
     if (pathname.includes('users')) {
       setSelectedPage('/users');
-    } else if (pathname.includes('auth')) {
-      setSelectedPage('/auth');
     } else {
       setSelectedPage('/');
     }

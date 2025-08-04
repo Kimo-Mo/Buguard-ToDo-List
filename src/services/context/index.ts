@@ -3,3 +3,4 @@ export * from './QueryProvider';
 export * from './ThemeProvider';
 export * from './UIProvider';
 export * from './ColorsProvider';
+export * from './AuthProvider';

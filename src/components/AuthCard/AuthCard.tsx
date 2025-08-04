@@ -5,8 +5,11 @@ import { useAuth0 } from '@auth0/auth0-react';
 const AuthCard = () => {
   const { user, isAuthenticated, isLoading, error } = useAuth0();
   return (
-    <div className="flex justify-center items-center">
-      <Card title={isAuthenticated ? 'Profile' : 'Welcome'} variant="borderless" style={{ width: 300 }}>
+    <div className="flex justify-center items-center my-12">
+      <Card
+        title={isAuthenticated ? 'Profile' : 'Welcome to Dashboard'}
+        variant="borderless"
+        style={{ width: 300 }}>
         {error && (
           <p className="text-danger text-center my-6">{error.message}</p>
         )}
@@ -22,10 +25,10 @@ const AuthCard = () => {
               alt={user?.name}
               className="rounded-full size-16 inline-block"
             />
-            <p className='text-lg font-medium'>{user?.name}</p>
+            <p className="text-lg font-medium">{user?.name}</p>
           </div>
         )}
-        <div>{isAuthenticated ? <LogoutButton /> : <LoginButton />}</div>
+        <div className='flex justify-center'>{isAuthenticated ? <LogoutButton /> : <LoginButton />}</div>
       </Card>
     </div>
   );
