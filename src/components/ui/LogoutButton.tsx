@@ -7,7 +7,6 @@ const LogoutButton = () => {
   return (
     <Button
       variant="outlined"
-      className="!w-full"
       onClick={() =>
         logout({ logoutParams: { returnTo: window.location.origin } })
       }>

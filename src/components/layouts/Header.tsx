@@ -2,6 +2,7 @@ import { Avatar, Input } from 'antd';
 import { BellOutlined, UserOutlined } from '@ant-design/icons';
 
 import { useAuth0 } from '@auth0/auth0-react';
+import { LogoutButton } from '../ui';
 const { Search } = Input;
 
 interface HeaderProps {
@@ -34,6 +35,7 @@ const Header = ({ searchQuery, setSearchQuery }: HeaderProps) => {
           <p>Workspace</p>
           <p>{isAuthenticated ? user?.name : 'username'}</p>
         </div>
+        {isAuthenticated && <LogoutButton />}
       </div>
     </nav>
   );
